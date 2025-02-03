@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .black-background {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 270px;
+        height: 60px;
+        background-color: black;
+      }
+      .palette {
+        position: absolute;
+        opacity: 0.9;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          to right,
+          white 14%,
+          yellow 14%,
+          yellow 28%,
+          cyan 28%,
+          cyan 42%,
+          lime 42%,
+          lime 56%,
+          fuchsia 56%,
+          fuchsia 70%,
+          red 70%,
+          red 84%,
+          blue 84%,
+          blue 100%
+        );
+      }
+      .time {
+        padding: 0 3px;
+        z-index: 99;
+        background-color: black;
+        color: white;
+        font-size: 32px;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body onload="startTime()">
+    <div class="black-background">
+      <div class="palette"></div>
+      <div class="time">ШеЗа <span id="time-text"></span></div>
+    </div>
+    <script>
+      function startTime() {
+        const today = new Date();
+        let h = today.getHours();
+        let m = today.getMinutes();
+        let s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById("time-text").innerHTML =
+          today.toLocaleTimeString("ru-RU");
+        setTimeout(startTime, 1000);
+      }
+
+      function checkTime(i) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        return i;
+      }
+    </script>
+  </body>
+</html>

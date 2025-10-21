@@ -4,17 +4,87 @@
     <style>
       html,
       body {
-        margin: 0;
+        background: burlywood;
+        margin: 100px;
         padding: 0;
       }
-      .black-background {
+      .main-container {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        /* align-items: center; */
         position: relative;
         width: 270px;
         height: 60px;
         background-color: black;
+        overflow: hidden;
+      }
+
+      .animate-moving-down-half {
+        animation: half-open 10s ease-in-out forwards;
+      }
+      .animate-moving-down-full {
+        animation: full-open 15s ease-in-out forwards;
+      }
+      .clock-fixed-part {
+        position: absolute;
+        overflow: hidden;
+        right: 0;
+        width: 135px;
+        height: 60px;
+      }
+
+      .clock-moving-area {
+        position: absolute;
+        width: 135px;
+        height: 60px;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        background-color: black;
+        background-image: url("./eyes.jpg");
+        background-position: -40px -30px;
+        background-size: auto 122px;
+      }
+
+      .clock-moving-part {
+        box-shadow: 0 0 7px rgba(0, 0, 0, 0.7);
+        position: absolute;
+        width: 135px;
+        height: 60px;
+        transform-origin: bottom center;
+        position: absolute;
+        left: 0;
+        overflow: visible;
+      }
+
+      .clock-moving-part.hand-appears::before {
+        transform: translateY(20px);
+      }
+      .clock-moving-part::before {
+        transition: transform 0.6s ease-in-out;
+        z-index: 99;
+        content: "";
+        position: absolute;
+        top: -30px;
+        right: 5px;
+        height: 30px;
+        width: 50px;
+        background: url("./hand.png") no-repeat center / contain;
+      }
+
+      .clock {
+        right: 0;
+        width: 270px;
+        height: 60px;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
+      }
+      .stick-only-to-left {
+        right: auto;
+        left: 0;
       }
       .palette {
         position: absolute;
@@ -41,38 +111,327 @@
         );
       }
       .time {
-        padding: 0 3px;
-        z-index: 99;
+        position: absolute;
+        padding: 0 1px 0 3px;
         background-color: black;
         color: white;
         font-size: 32px;
         font-family: sans-serif;
       }
+      .time-text {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+      .time-formatted {
+        width: 7.2ch;
+      }
     </style>
   </head>
-  <body onload="startTime()">
-    <div class="black-background">
-      <div class="palette"></div>
-      <div class="time">ШеЗа <span id="time-text"></span></div>
+  <body onload="runClocks()">
+    <div class="main-container">
+      <div class="clock-fixed-part">
+        <div class="clock">
+          <div class="palette"></div>
+          <div class="time">
+            <div class="time-text">
+              <div>ШеЗа&nbsp;</div>
+              <div class="time-formatted"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clock-moving-area">
+        <div class="clock-moving-part"></div>
+      </div>
     </div>
     <script>
-      function startTime() {
+      const HalfOpenFrames = [
+        {
+          percentTime: "6.20",
+          percentOpen: "0.00",
+        },
+
+        {
+          percentTime: "15.65",
+          percentOpen: "17.00",
+        },
+        {
+          percentTime: "17.83",
+          percentOpen: "19.00",
+        },
+        {
+          percentTime: "90.54",
+          percentOpen: "19.00",
+        },
+        {
+          percentTime: "100.00",
+          percentOpen: "0.00",
+        },
+      ];
+
+      const FullOpenFrames = [
+        {
+          percentTime: "4.06",
+          percentOpen: "0.00",
+        },
+        {
+          percentTime: "5.02",
+          percentOpen: "6.00",
+        },
+        {
+          percentTime: "6.02",
+          percentOpen: "11.00",
+        },
+        {
+          percentTime: "7.07",
+          percentOpen: "15.00",
+        },
+        {
+          percentTime: "8.03",
+          percentOpen: "17.00",
+        },
+        {
+          percentTime: "9.01",
+          percentOpen: "19.00",
+        },
+        {
+          percentTime: "22.20",
+          percentOpen: "19.00",
+        },
+        {
+          percentTime: "23.20",
+          percentOpen: "27.00",
+        },
+        {
+          percentTime: "24.20",
+          percentOpen: "33.00",
+        },
+        {
+          percentTime: "25.19",
+          percentOpen: "38.00",
+        },
+        {
+          percentTime: "26.16",
+          percentOpen: "44.00",
+        },
+        {
+          percentTime: "27.37",
+          percentOpen: "46.00",
+        },
+        {
+          percentTime: "28.43",
+          percentOpen: "47.00",
+        },
+        {
+          percentTime: "29.39",
+          percentOpen: "48.00",
+        },
+        {
+          percentTime: "30.36",
+          percentOpen: "50.00",
+        },
+        {
+          percentTime: "31.38",
+          percentOpen: "53.00",
+        },
+        {
+          percentTime: "32.44",
+          percentOpen: "56.00",
+        },
+        {
+          percentTime: "33.50",
+          percentOpen: "57.00",
+        },
+        {
+          percentTime: "34.88",
+          percentOpen: "58.00",
+        },
+        {
+          percentTime: "36.37",
+          percentOpen: "59.00",
+        },
+        {
+          percentTime: "37.69",
+          percentOpen: "60.00",
+        },
+        {
+          percentTime: "44.50",
+          percentOpen: "60.00",
+        },
+        {
+          percentTime: "59.59",
+          percentOpen: "60.00",
+        },
+        {
+          percentTime: "60.56",
+          percentOpen: "56.00",
+        },
+        {
+          percentTime: "61.51",
+          percentOpen: "50.00",
+        },
+        {
+          percentTime: "62.48",
+          percentOpen: "44.00",
+        },
+        {
+          percentTime: "63.46",
+          percentOpen: "39.00",
+        },
+        {
+          percentTime: "64.47",
+          percentOpen: "33.00",
+        },
+        {
+          percentTime: "65.47",
+          percentOpen: "28.00",
+        },
+        {
+          percentTime: "66.49",
+          percentOpen: "25.00",
+        },
+        {
+          percentTime: "67.48",
+          percentOpen: "20.00",
+        },
+        {
+          percentTime: "68.48",
+          percentOpen: "13.00",
+        },
+        {
+          percentTime: "69.44",
+          percentOpen: "8.00",
+        },
+        {
+          percentTime: "70.42",
+          percentOpen: "2.00",
+        },
+        {
+          percentTime: "71.43",
+          percentOpen: "0.00",
+        },
+        {
+          percentTime: "72.51",
+          percentOpen: "0.00",
+        },
+        {
+          percentTime: "79.29",
+          percentOpen: "0.00",
+        },
+        {
+          percentTime: "80.24",
+          percentOpen: "0.00",
+        },
+        {
+          percentTime: "81.21",
+          percentOpen: "4.00",
+        },
+        {
+          percentTime: "82.23",
+          percentOpen: "11.00",
+        },
+        {
+          percentTime: "83.21",
+          percentOpen: "15.00",
+        },
+        {
+          percentTime: "84.24",
+          percentOpen: "16.00",
+        },
+        {
+          percentTime: "85.44",
+          percentOpen: "17.00",
+        },
+        {
+          percentTime: "95.26",
+          percentOpen: "18.00",
+        },
+        {
+          percentTime: "99.04",
+          percentOpen: "18.00",
+        },
+        {
+          percentTime: "100.00",
+          percentOpen: "0.00",
+        },
+      ];
+      const generateKeyframes = (frames, name) => {
+        let keyframes = `@keyframes ${name} {\n`;
+        frames.forEach((frame) => {
+          keyframes += `${frame.percentTime}% { transform:
+          translateY(${frame.percentOpen}px) rotateZ(${
+            frame.percentOpen * -0.2
+          }deg);
+           }\n`;
+        });
+        keyframes += "}\n";
+        return keyframes;
+      };
+
+      const styleEl = document.querySelector("head style");
+      console.log(styleEl);
+      styleEl.textContent += generateKeyframes(HalfOpenFrames, "half-open");
+      styleEl.textContent += generateKeyframes(FullOpenFrames, "full-open");
+
+      const copyClockElement = () => {
+        const clock = document.querySelector(".clock");
+        if (clock) {
+          const clone = clock.cloneNode(true);
+          clone.classList.add("stick-only-to-left");
+          clone.classList.add("moving-clock");
+          document.querySelector(".clock-moving-part").appendChild(clone);
+        }
+      };
+
+      copyClockElement();
+
+      const clockMovingPartElement =
+        document.querySelector(".clock-moving-part");
+      let animating = false;
+      const startAnimation = (type) => {
+        if (animating) return;
+        animating = true;
+        const { time, className } = {
+          full: { time: 15000, className: "animate-moving-down-full" },
+          half: { time: 10000, className: "animate-moving-down-half" },
+        }[type];
+        const clockElement = document.querySelector(".moving-clock");
+        setTimeout(() => {
+          clockMovingPartElement.classList.add("hand-appears");
+          setTimeout(() => {
+            clockMovingPartElement.classList.add("animate-moving-down-full");
+            clockMovingPartElement.addEventListener(
+              "animationend",
+              function handler() {
+                clockMovingPartElement.classList.remove("hand-appears");
+                clockMovingPartElement.removeEventListener(
+                  "animationend",
+                  handler
+                );
+                animating = false;
+              }
+            );
+          }, 500);
+        }, 2000);
+      };
+
+      function runClocks() {
         const today = new Date();
         let h = today.getHours();
         let m = today.getMinutes();
         let s = today.getSeconds();
-        m = checkTime(m);
-        s = checkTime(s);
-        document.getElementById("time-text").innerHTML =
-          today.toLocaleTimeString("ru-RU");
-        setTimeout(startTime, 1000);
-      }
-
-      function checkTime(i) {
-        if (i < 10) {
-          i = "0" + i;
+        document.querySelectorAll(".time-formatted").forEach((e) => {
+          e.innerHTML = today.toLocaleTimeString("ru-RU");
+        });
+        if ([0, 15, 30, 45].includes(m) && s === 0) {
+          startAnimation("full");
+        } else if (
+          [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].includes(m) &&
+          s === 0
+        ) {
+          startAnimation("half");
         }
-        return i;
+        setTimeout(runClocks, 1000);
       }
     </script>
   </body>

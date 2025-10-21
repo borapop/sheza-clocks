@@ -399,11 +399,12 @@
         setTimeout(() => {
           clockMovingPartElement.classList.add("hand-appears");
           setTimeout(() => {
-            clockMovingPartElement.classList.add("animate-moving-down-full");
+            clockMovingPartElement.classList.add(className);
             clockMovingPartElement.addEventListener(
               "animationend",
               function handler() {
                 clockMovingPartElement.classList.remove("hand-appears");
+                clockMovingPartElement.classList.remove(className);
                 clockMovingPartElement.removeEventListener(
                   "animationend",
                   handler
@@ -425,10 +426,7 @@
         });
         if ([0, 15, 30, 45].includes(m) && s === 0) {
           startAnimation("full");
-        } else if (
-          [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].includes(m) &&
-          s === 0
-        ) {
+        } else if ([5, 10, 20, 25, 35, 40, 50, 55].includes(m) && s === 0) {
           startAnimation("half");
         }
         setTimeout(runClocks, 1000);

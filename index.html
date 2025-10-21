@@ -16,6 +16,7 @@
         height: 60px;
         background-color: black;
         overflow: hidden;
+        cursor: pointer;
       }
 
       .animate-moving-down-half {
@@ -112,7 +113,7 @@
       }
       .time {
         position: absolute;
-        padding: 0 1px 0 3px;
+        padding: 0 1px 0 5px;
         background-color: black;
         color: white;
         font-size: 32px;
@@ -123,7 +124,7 @@
         flex-wrap: nowrap;
       }
       .time-formatted {
-        width: 7.2ch;
+        width: 7.1ch;
       }
     </style>
   </head>
@@ -134,7 +135,7 @@
           <div class="palette"></div>
           <div class="time">
             <div class="time-text">
-              <div>ШеЗа&nbsp;</div>
+              <div>&#1064;&#1077;&#1047;&#1072;&nbsp;</div>
               <div class="time-formatted"></div>
             </div>
           </div>
@@ -369,7 +370,6 @@
       };
 
       const styleEl = document.querySelector("head style");
-      console.log(styleEl);
       styleEl.textContent += generateKeyframes(HalfOpenFrames, "half-open");
       styleEl.textContent += generateKeyframes(FullOpenFrames, "full-open");
 
@@ -415,6 +415,11 @@
           }, 500);
         }, 2000);
       };
+
+      const mainContainerElement = document.querySelector(".main-container");
+      mainContainerElement.addEventListener("click", () => {
+        startAnimation("half");
+      });
 
       function runClocks() {
         const today = new Date();
